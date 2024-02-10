@@ -1,9 +1,16 @@
-import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
+import { ApolloServer, gql } from "apollo-server-express";
+import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
+import http from "http";
+import express from "express";
+import cors from "cors";
 import { connect } from 'mongoose';
 import Home from '../models/Home.js';
 const MongoDB = "mongodb+srv://thejaschintu:DmTsqfeowoNtTrEJ@cluster0.zma83ly.mongodb.net/?retryWrites=true&w=majority";
-const typeDefs = `#graphql
+const app = express();
+app.use(cors());
+app.use(express.json());
+const httpServer = http.createServer(app);
+const typeDefs = gql `
 
   type TopsellingPackages{
     _id:String
@@ -315,8 +322,14 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
 });
-const port = Number(process.env.PORT || 4000);
-const { url } = await startStandaloneServer(server, {
-    listen: { port: port },
-});
-console.log(`🚀  Server ready at: ${url}`);
+const startApolloServer = async (app, httpServer) => {
+    const server = new ApolloServer({
+        typeDefs,
+        resolvers,
+        plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    });
+    await server.start();
+    server.applyMiddleware({ app });
+};
+startApolloServer(app, httpServer);
+export default httpServer;
