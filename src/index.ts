@@ -1,4 +1,4 @@
-import { ApolloServer } from '@apollo/server'
+import {  ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
 import {connect} from 'mongoose'
 import Home from '../models/Home.js'
