@@ -318,6 +318,7 @@ await connect(MongoDB)
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    introspection: true,
   })
 
   const port=Number(process.env.PORT || 4000)
